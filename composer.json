@@ -1,0 +1,19 @@
+{
+  "name": "bashirpg/afri-ticket-twig",
+  "description": "Afri Ticket Twig website for managing tickets",
+  "require": {
+    "twig/twig": "^3.21"
+  },
+  "license": "MIT",
+  "autoload": {
+    "psr-4": {
+      "Src\\": "src/"
+    }
+  },
+  "authors": [
+    {
+      "name": "Sadiq Abdulkareem",
+      "email": "abdulkareemson@gmail.com"
+    }
+  ]
+}

@@ -1,0 +1,45 @@
+<form action="{{ form_action }}" method="post" class="w-full max-w-lg bg-white p-6 rounded-lg shadow-md space-y-4">
+
+    <h2 class="text-2xl font-bold text-center mb-4">
+        {{ ticket is defined ? 'Edit Ticket' : 'Create Ticket' }}
+    </h2>
+
+    <!-- Title -->
+    <div>
+        <label class="block font-medium mb-1" for="title">Title</label>
+        <input type="text" name="title" id="title"
+               value="{{ ticket.title|default('') }}"
+               class="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400"/>
+        {% if errors.title is defined %}
+            <p class="text-red-500 text-sm mt-1">{{ errors.title }}</p>
+        {% endif %}
+    </div>
+
+    <!-- Description -->
+    <div>
+        <label class="block font-medium mb-1" for="description">Description</label>
+        <textarea name="description" id="description" rows="6"
+                  class="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400">{{ ticket.description|default('') }}</textarea>
+        {% if errors.description is defined %}
+            <p class="text-red-500 text-sm mt-1">{{ errors.description }}</p>
+        {% endif %}
+    </div>
+
+    <!-- Priority -->
+    <div>
+        <label class="block font-medium mb-1" for="priority">Priority</label>
+        <select name="priority" id="priority"
+                class="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400">
+            {% for p in priorities %}
+                <option value="{{ p }}" {% if ticket.priority|default('low') == p %}selected{% endif %}>
+                    {{ p|capitalize }}
+                </option>
+            {% endfor %}
+        </select>
+    </div>
+
+    <button type="submit"
+            class="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700 transition">
+        {{ ticket is defined ? 'Update Ticket' : 'Create Ticket' }}
+    </button>
+</form>

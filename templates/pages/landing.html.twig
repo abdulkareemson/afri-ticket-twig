@@ -1,0 +1,130 @@
+{% set features = [
+  {'title':'Easy Management','description':'Quickly create and track tickets for events or support requests.'},
+  {'title':'Real-time Updates','description':'Stay informed with real-time ticket status updates and notifications.'},
+  {'title':'Secure Platform','description':'Your data is safe and accessible only by authorized users.'}
+] %}
+
+<div class="relative flex flex-col min-h-screen">
+
+  {# ==============================
+     NAVIGATION BAR
+  =============================== #}
+  <nav class="sticky top-0 z-50 bg-white shadow-md">
+    <div class="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+      {# Left: Logo #}
+      <div class="flex items-center space-x-2">
+        <img src="/assets/logo.png" alt="AfriTicket Logo" class="h-10" />
+      </div>
+
+      {# Center: Links #}
+      <div class="hidden md:flex space-x-8 text-gray-700 font-medium">
+        <a href="#home" class="hover:text-blue-600 hover:underline transition">Home</a>
+        <a href="#about" class="hover:text-blue-600 hover:underline transition">About Us</a>
+        <a href="#contact" class="hover:text-blue-600 hover:underline transition">Contact</a>
+      </div>
+
+      {# Right: Auth Buttons #}
+      <div class="hidden md:flex space-x-4">
+        <a href="/login" class="px-4 py-2 border border-gray-700 rounded hover:bg-gray-100 transition">Login</a>
+        <a href="/signup" class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition">Get Started</a>
+      </div>
+
+      {# Mobile Menu Toggle #}
+      <div class="md:hidden">
+        <button id="mobileMenuToggle" class="text-gray-700 hover:text-gray-900 focus:outline-none">
+          <svg id="mobileOpenIcon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-6 h-6">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16"/>
+          </svg>
+          <svg id="mobileCloseIcon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-6 h-6 hidden">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+
+    {# Mobile Menu #}
+    <div id="mobileMenu" class="md:hidden bg-white shadow-md opacity-0 pointer-events-none transition-opacity duration-300">
+      <ul class="flex flex-col space-y-2 px-4 py-4 text-gray-700 font-medium">
+        <li><a href="#home">Home</a></li>
+        <li><a href="#about">About Us</a></li>
+        <li><a href="#contact">Contact</a></li>
+        <li><a href="/login" class="px-4 py-2 border border-gray-700 rounded hover:bg-gray-100 transition block">Login</a></li>
+        <li><a href="/signup" class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition block">Get Started</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  {# ==============================
+     HERO SECTION
+  =============================== #}
+  <section id="home" class="relative w-full flex items-start justify-start pt-2 md:pt-2">
+    <div class="relative w-full h-[90vh] md:h-[85vh] lg:h-[80vh]">
+      <img src="/assets/hero.jpg" alt="Hero" class="w-full h-full object-cover object-top brightness-75 transition duration-700 ease-in-out hover:brightness-100" />
+      <img src="/assets/circle-1.svg" alt="Circle 1" class="absolute top-10 left-10 w-32 h-32" />
+      <img src="/assets/circle-2.svg" alt="Circle 2" class="absolute bottom-10 right-20 w-40 h-40" />
+      <img src="/assets/wave.svg" alt="Wave" class="absolute bottom-0 w-full" />
+    </div>
+
+    <div class="absolute inset-0 flex items-start justify-start max-w-[1440px] mx-auto px-6 py-24 md:py-32 flex-col gap-6 text-white">
+      <h1 class="text-4xl md:text-6xl font-bold max-w-2xl">AfriTicket</h1>
+      <p class="text-lg md:text-2xl max-w-xl">
+        Manage your events and tickets seamlessly with AfriTicket. Create, track, and resolve tickets easily from one modern platform.
+      </p>
+      <div class="flex flex-col sm:flex-row gap-4 mt-4">
+        <a href="/signup" class="px-6 py-3 bg-blue-600 rounded-lg text-white font-semibold hover:bg-blue-700 transition">Get Started</a>
+        <a href="/login" class="px-6 py-3 border border-white rounded-lg text-white font-semibold hover:bg-white hover:text-blue-600 transition">Login</a>
+      </div>
+    </div>
+  </section>
+
+  {# ==============================
+     FEATURES SECTION
+  =============================== #}
+  <section id="about" class="max-w-[1440px] mx-auto px-6 py-24 flex flex-col items-center text-center">
+    <h2 class="text-3xl md:text-4xl font-bold mb-12 text-gray-800">Why Choose AfriTicket?</h2>
+    <div class="grid md:grid-cols-3 gap-8 w-full">
+      {% for feature in features %}
+        <div class="bg-white p-6 rounded-xl shadow-md hover:shadow-xl transform hover:-translate-y-1 transition-transform duration-300 cursor-pointer" style="transition-delay: {{ loop.index0 * 0.1 }}s">
+          <h3 class="font-semibold text-lg mb-2 text-gray-800">{{ feature.title }}</h3>
+          <p class="text-gray-600 text-sm">{{ feature.description }}</p>
+        </div>
+      {% endfor %}
+    </div>
+  </section>
+
+  {# ==============================
+     CONTACT SECTION
+  =============================== #}
+  <section id="contact" class="max-w-[1440px] mx-auto px-6 py-24 flex flex-col items-center text-center bg-gray-50">
+    <div class="w-full md:w-2/3 lg:w-1/2 bg-white p-8 rounded-2xl shadow-lg flex flex-col items-center gap-6">
+      <h2 class="text-3xl md:text-4xl font-bold text-gray-800">Contact Us</h2>
+      <p class="text-gray-600 text-sm md:text-base">
+        Have questions or need support? Reach out to us and we'll respond promptly.
+      </p>
+      <a href="mailto:support@afriticket.com" class="flex items-center gap-2 px-6 py-3 bg-blue-600 rounded-lg text-white font-semibold hover:bg-blue-700 transition duration-300">
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 12H8m0 0l4-4m-4 4l4 4"/>
+        </svg>
+        Email Support
+      </a>
+    </div>
+  </section>
+</div>
+
+{# ==============================
+   MOBILE MENU JS
+=============================== #}
+<script>
+const toggle = document.getElementById('mobileMenuToggle');
+const menu = document.getElementById('mobileMenu');
+const openIcon = document.getElementById('mobileOpenIcon');
+const closeIcon = document.getElementById('mobileCloseIcon');
+
+toggle.addEventListener('click', () => {
+  menu.classList.toggle('opacity-0');
+  menu.classList.toggle('pointer-events-none');
+  menu.classList.toggle('opacity-100');
+  openIcon.classList.toggle('hidden');
+  closeIcon.classList.toggle('hidden');
+});
+</script>

@@ -1,0 +1,64 @@
+<nav class="bg-white shadow-md px-6 py-4 flex justify-between items-center">
+  <!-- Logo -->
+  <div
+    class="flex items-center gap-2 cursor-pointer"
+    onclick="window.location.href='{{ path('dashboard') }}'"
+  >
+    <img src="{{ asset('assets/logo.png') }}" alt="AfriTicket Logo" class="h-12 w-auto" />
+  </div>
+
+  <!-- Desktop Links -->
+  <div class="hidden md:flex items-center gap-6">
+    <a href="{{ path('dashboard') }}" class="text-gray-700 hover:text-blue-600 transition">
+      Dashboard
+    </a>
+    <a href="{{ path('tickets') }}" class="text-gray-700 hover:text-blue-600 transition">
+      Tickets
+    </a>
+    <span class="text-gray-500">Hello, {{ user.name ?? 'Guest' }}</span>
+    <form action="{{ path('logout') }}" method="post" class="inline">
+      <button
+        type="submit"
+        class="px-4 py-1 bg-red-500 text-white rounded hover:bg-red-600 transition"
+      >
+        Logout
+      </button>
+    </form>
+  </div>
+
+  <!-- Mobile Menu -->
+  <div class="md:hidden relative">
+    <button id="menu-toggle" class="text-gray-700 focus:outline-none text-2xl">☰</button>
+
+    <div
+      id="mobile-menu"
+      class="hidden absolute right-0 mt-2 w-56 bg-white shadow-lg rounded-md flex flex-col p-2 z-50"
+    >
+      <a href="{{ path('dashboard') }}" class="py-2 px-3 hover:bg-gray-100 rounded">
+        Dashboard
+      </a>
+      <a href="{{ path('tickets') }}" class="py-2 px-3 hover:bg-gray-100 rounded">
+        Tickets
+      </a>
+      <span class="py-2 px-3 text-gray-500">Hello, {{ user.name ?? 'Guest' }}</span>
+      <form action="{{ path('logout') }}" method="post" class="p-2">
+        <button
+          type="submit"
+          class="py-2 px-3 mt-1 bg-red-500 text-white rounded hover:bg-red-600 w-full"
+        >
+          Logout
+        </button>
+      </form>
+    </div>
+  </div>
+</nav>
+
+<script>
+  const toggleBtn = document.getElementById('menu-toggle');
+  const menu = document.getElementById('mobile-menu');
+  if (toggleBtn && menu) {
+    toggleBtn.addEventListener('click', () => {
+      menu.classList.toggle('hidden');
+    });
+  }
+</script>

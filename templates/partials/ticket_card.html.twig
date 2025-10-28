@@ -1,0 +1,56 @@
+<div class="bg-white shadow-md rounded-lg p-4 cursor-pointer hover:shadow-lg transition">
+
+    <!-- Title -->
+    <h3 class="text-lg font-semibold mb-2">{{ ticket.title }}</h3>
+
+    <!-- Description -->
+    <p class="text-gray-600 mb-4">
+        {{ ticket.description|length > 100 ? ticket.description[:100] ~ '...' : ticket.description }}
+    </p>
+
+    <!-- Status & Priority -->
+    <div class="flex items-center justify-between mb-4">
+        <span class="px-2 py-1 rounded text-sm 
+            {% if ticket.status == 'open' %}bg-green-200 text-green-800
+            {% elseif ticket.status == 'in_progress' %}bg-yellow-200 text-yellow-800
+            {% elseif ticket.status == 'closed' %}bg-gray-200 text-gray-800
+            {% else %}bg-gray-200 text-gray-800{% endif %}">
+            {{ ticket.status|replace({'_':' '})|upper }}
+        </span>
+
+        <span class="px-2 py-1 rounded text-sm 
+            {% if ticket.priority == 'low' %}bg-blue-200 text-blue-800
+            {% elseif ticket.priority == 'medium' %}bg-yellow-200 text-yellow-800
+            {% elseif ticket.priority == 'high' %}bg-red-200 text-red-800
+            {% else %}bg-gray-200 text-gray-800{% endif %}">
+            {{ ticket.priority|upper }}
+        </span>
+    </div>
+
+    <!-- Actions -->
+    <div class="flex justify-end gap-2">
+        {% if edit_path %}
+            <a href="{{ edit_path }}" 
+               class="px-3 py-1 bg-yellow-500 text-white rounded hover:bg-yellow-600 transition">
+                Edit
+            </a>
+        {% endif %}
+
+        {% if delete_path %}
+            <form action="{{ delete_path }}" method="post" class="inline">
+                <button type="submit"
+                        class="px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600 transition">
+                    Delete
+                </button>
+            </form>
+        {% endif %}
+
+        {% if details_path %}
+            <a href="{{ details_path }}" 
+               class="px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600 transition">
+                View
+            </a>
+        {% endif %}
+    </div>
+
+</div>
