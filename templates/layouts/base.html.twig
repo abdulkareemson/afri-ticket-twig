@@ -4,41 +4,33 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="description" content="AfriTicket – Simplified Ticket Management App" />
-    <link rel="icon" type="image/jpeg" href="/favicon.jpg" />
+
     <title>{% block title %}AfriTicket{% endblock %}</title>
 
-    {# TailwindCSS (from CDN for dev or compiled via Encore/Vite in prod) #}
-    <link
-      href="https://cdn.jsdelivr.net/npm/tailwindcss@3.4.3/dist/tailwind.min.css"
-      rel="stylesheet"
-    />
+    {# Tailwind CSS & custom styles #}
+    <link rel="stylesheet" href="/assets/style.css" />
+    <link rel="stylesheet" href="/assets/tailwind.css" />
 
-    {# Google Fonts (Inter, Poppins for consistency with Vue/React) #}
+    {# Google Fonts #}
     <link
       href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@400;600&display=swap"
       rel="stylesheet"
     />
 
-    {# Optional animations (AOS) #}
-    <link
-      href="https://unpkg.com/aos@2.3.4/dist/aos.css"
-      rel="stylesheet"
-    />
+    {# AOS (Animate On Scroll) Styles #}
+    <link href="https://unpkg.com/aos@2.3.4/dist/aos.css" rel="stylesheet" />
+
+    {# Favicon #}
+    <link rel="icon" type="image/jpeg" href="/favicon.jpg" />
   </head>
 
-  <body
-    class="font-inter text-gray-800 bg-gray-50 scroll-smooth"
-    x-data
-  >
+  <body class="font-inter text-gray-800 bg-gray-50 scroll-smooth">
     {% block content %}{% endblock %}
 
-    {# Footer scripts #}
+    {# AOS Script #}
     <script src="https://unpkg.com/aos@2.3.4/dist/aos.js"></script>
     <script>
-      AOS.init({
-        duration: 800,
-        once: true,
-      });
+      AOS.init({ duration: 800, once: true });
     </script>
   </body>
 </html>

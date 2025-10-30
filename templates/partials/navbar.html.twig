@@ -1,64 +1,60 @@
-<nav class="bg-white shadow-md px-6 py-4 flex justify-between items-center">
-  <!-- Logo -->
-  <div
-    class="flex items-center gap-2 cursor-pointer"
-    onclick="window.location.href='{{ path('dashboard') }}'"
-  >
-    <img src="{{ asset('assets/logo.png') }}" alt="AfriTicket Logo" class="h-12 w-auto" />
-  </div>
-
-  <!-- Desktop Links -->
-  <div class="hidden md:flex items-center gap-6">
-    <a href="{{ path('dashboard') }}" class="text-gray-700 hover:text-blue-600 transition">
-      Dashboard
-    </a>
-    <a href="{{ path('tickets') }}" class="text-gray-700 hover:text-blue-600 transition">
-      Tickets
-    </a>
-    <span class="text-gray-500">Hello, {{ user.name ?? 'Guest' }}</span>
-    <form action="{{ path('logout') }}" method="post" class="inline">
-      <button
-        type="submit"
-        class="px-4 py-1 bg-red-500 text-white rounded hover:bg-red-600 transition"
-      >
-        Logout
-      </button>
-    </form>
-  </div>
-
-  <!-- Mobile Menu -->
-  <div class="md:hidden relative">
-    <button id="menu-toggle" class="text-gray-700 focus:outline-none text-2xl">☰</button>
-
-    <div
-      id="mobile-menu"
-      class="hidden absolute right-0 mt-2 w-56 bg-white shadow-lg rounded-md flex flex-col p-2 z-50"
-    >
-      <a href="{{ path('dashboard') }}" class="py-2 px-3 hover:bg-gray-100 rounded">
-        Dashboard
-      </a>
-      <a href="{{ path('tickets') }}" class="py-2 px-3 hover:bg-gray-100 rounded">
-        Tickets
-      </a>
-      <span class="py-2 px-3 text-gray-500">Hello, {{ user.name ?? 'Guest' }}</span>
-      <form action="{{ path('logout') }}" method="post" class="p-2">
-        <button
-          type="submit"
-          class="py-2 px-3 mt-1 bg-red-500 text-white rounded hover:bg-red-600 w-full"
-        >
-          Logout
-        </button>
-      </form>
+<nav class="sticky top-0 z-50 bg-white shadow-md">
+  <div class="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+    
+    {# Logo #}
+    <div class="flex items-center space-x-2 cursor-pointer" onclick="window.location.href='/'">
+      <img src="/assets/logo.png" alt="AfriTicket Logo" class="h-10" />
     </div>
+
+    {# Desktop Links #}
+    <div class="hidden md:flex space-x-8 text-gray-700 font-medium">
+      <a href="#home" class="hover:text-blue-600 hover:underline transition">Home</a>
+      <a href="#about" class="hover:text-blue-600 hover:underline transition">About Us</a>
+      <a href="#contact" class="hover:text-blue-600 hover:underline transition">Contact</a>
+    </div>
+
+    {# Auth Buttons Desktop #}
+    <div class="hidden md:flex space-x-4">
+      <a href="/login" class="px-4 py-2 border border-gray-700 rounded hover:bg-gray-100 transition">Login</a>
+      <a href="/signup" class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition">Get Started</a>
+    </div>
+
+    {# Mobile Menu Toggle #}
+    <div class="md:hidden relative">
+      <button id="mobileMenuToggle" class="text-gray-700 hover:text-gray-900 focus:outline-none">
+        <svg id="mobileOpenIcon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-6 h-6">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16"/>
+        </svg>
+        <svg id="mobileCloseIcon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-6 h-6 hidden">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
+        </svg>
+      </button>
+    </div>
+  </div>
+
+  {# Mobile Menu #}
+  <div id="mobileMenu" class="md:hidden bg-white shadow-md opacity-0 pointer-events-none transition-opacity duration-300">
+    <ul class="flex flex-col space-y-2 px-4 py-4 text-gray-700 font-medium">
+      <li><a href="#home">Home</a></li>
+      <li><a href="#about">About Us</a></li>
+      <li><a href="#contact">Contact</a></li>
+      <li><a href="/login" class="px-4 py-2 border border-gray-700 rounded hover:bg-gray-100 transition block">Login</a></li>
+      <li><a href="/signup" class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition block">Get Started</a></li>
+    </ul>
   </div>
 </nav>
 
 <script>
-  const toggleBtn = document.getElementById('menu-toggle');
-  const menu = document.getElementById('mobile-menu');
-  if (toggleBtn && menu) {
-    toggleBtn.addEventListener('click', () => {
-      menu.classList.toggle('hidden');
-    });
-  }
+const toggle = document.getElementById('mobileMenuToggle');
+const menu = document.getElementById('mobileMenu');
+const openIcon = document.getElementById('mobileOpenIcon');
+const closeIcon = document.getElementById('mobileCloseIcon');
+
+toggle?.addEventListener('click', () => {
+  menu.classList.toggle('opacity-0');
+  menu.classList.toggle('pointer-events-none');
+  menu.classList.toggle('opacity-100');
+  openIcon.classList.toggle('hidden');
+  closeIcon.classList.toggle('hidden');
+});
 </script>

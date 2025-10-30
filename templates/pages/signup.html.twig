@@ -10,7 +10,7 @@
       <div
         class="flex flex-col items-center md:items-start text-center md:text-left md:w-1/2 gap-4"
       >
-        <img src="{{ asset('images/logo.png') }}" alt="AfriTicket Logo" class="h-16 mb-2" />
+        <img src="/assets/logo.png" alt="AfriTicket Logo" class="h-16 mb-2" />
         <h2 class="text-3xl font-bold text-gray-800">Create Account</h2>
         <p class="text-gray-600">
           Sign up to start managing your events and tickets effortlessly.
@@ -20,13 +20,11 @@
       {# Right side: Form #}
       <form
         method="POST"
-        action="{{ path('app_register') }}"
+        action="/signup"
         class="flex flex-col gap-4 w-full md:w-1/2"
       >
-        {# CSRF Token (Symfony Example) #}
-        {% if csrf_token is defined %}
-          <input type="hidden" name="_csrf_token" value="{{ csrf_token('register') }}">
-        {% endif %}
+        {# CSRF token placeholder (you can implement later) #}
+        <input type="hidden" name="_csrf_token" value="{{ csrf_token|default('') }}">
 
         <label class="block">
           <span class="text-sm font-medium text-gray-700">Name</span>
@@ -61,7 +59,6 @@
           />
         </label>
 
-        {# Optional backend error message #}
         {% if error is defined and error %}
           <p class="text-red-600 text-sm mt-1">{{ error }}</p>
         {% endif %}
@@ -75,7 +72,7 @@
 
         <p class="mt-2 text-center text-gray-600 text-sm">
           Already have an account?
-          <a href="{{ path('app_login') }}" class="text-blue-600 hover:underline font-medium">
+          <a href="/login" class="text-blue-600 hover:underline font-medium">
             Login
           </a>
         </p>
@@ -84,7 +81,6 @@
   </div>
 </main>
 
-{# Page fade-slide animation #}
 <style>
   .fade-slide {
     opacity: 0;

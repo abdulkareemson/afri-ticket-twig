@@ -1,11 +1,13 @@
-{% extends "layouts/base.html.twig" %} {% block content %}
-<div class="min-h-screen flex flex-col bg-gray-50">
-  <main
-    class="flex-grow w-full max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 mt-6"
-  >
-    {% block main %}{% endblock %}
-  </main>
+{% extends "layouts/base.html.twig" %}
 
-  {# Footer #} {% include 'partials/footer.html.twig' %}
-</div>
+{% block content %}
+  <div class="min-h-screen flex flex-col bg-white">
+    {% include 'partials/navbar.html.twig' %}
+
+    <main class="flex-grow w-full max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8">
+      {% block main %}{% endblock %}
+    </main>
+
+    {% include 'partials/footer.html.twig' %}
+  </div>
 {% endblock %}

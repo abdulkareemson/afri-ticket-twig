@@ -2,18 +2,14 @@
 namespace Src\Controllers;
 
 use Twig\Environment;
-use Twig\Loader\FilesystemLoader;
 
 class LandingController
 {
     private Environment $twig;
 
-    public function __construct()
+    public function __construct(Environment $twig)
     {
-        $loader = new FilesystemLoader(__DIR__ . '/../../templates');
-        $this->twig = new Environment($loader, [
-            'cache' => false, // disable caching for development
-        ]);
+        $this->twig = $twig;
     }
 
     /**
@@ -36,7 +32,6 @@ class LandingController
             ],
         ];
 
-        // Decorative circles positions
         $circles = [
             ['top' => '10%', 'left' => '5%', 'size' => '80px'],
             ['top' => '70%', 'left' => '80%', 'size' => '120px'],
