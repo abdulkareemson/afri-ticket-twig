@@ -1,151 +1,54 @@
 {% extends "layouts/auth_layout.html.twig" %}
 
 {% block content %}
-<main class="min-h-screen flex items-center justify-center bg-gray-50 px-4">
-  <div class="w-full max-w-5xl px-4 sm:px-6 lg:px-8">
-    <div
-      class="flex flex-col md:flex-row items-center gap-8 w-full md:w-auto p-6 sm:p-8 bg-white rounded-2xl shadow-lg mx-auto fade-slide"
-    >
-      {# Left side: Logo & Intro Text #}
-      <div
-        class="flex flex-col items-center md:items-start text-center md:text-left md:w-1/2 gap-4"
-      >
-        <img src="/assets/logo.png" alt="AfriTicket Logo" class="h-16 mb-2" />
-        <h2 class="text-3xl font-bold text-gray-800">Create Account</h2>
-        <p class="text-gray-600">
-          Sign up to start managing your events and tickets effortlessly.
-        </p>
-      </div>
 
-      {# Right side: Form #}
-      <form
-        method="POST"
-        action="/signup"
-        class="flex flex-col gap-4 w-full md:w-1/2"
-      >
-        {# CSRF token placeholder (you can implement later) #}
-        <input type="hidden" name="_csrf_token" value="{{ csrf_token|default('') }}">
-
-        <label class="block">
-          <span class="text-sm font-medium text-gray-700">Name</span>
-          <input
-            type="text"
-            name="name"
-            placeholder="Your full name"
-            class="mt-1 w-full border px-3 py-2 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none transition"
-            required
-          />
-        </label>
-
-        <label class="block">
-          <span class="text-sm font-medium text-gray-700">Email</span>
-          <input
-            type="email"
-            name="email"
-            placeholder="you@example.com"
-            class="mt-1 w-full border px-3 py-2 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none transition"
-            required
-          />
-        </label>
-
-        <label class="block">
-          <span class="text-sm font-medium text-gray-700">Password</span>
-          <input
-            type="password"
-            name="password"
-            placeholder="********"
-            class="mt-1 w-full border px-3 py-2 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none transition"
-            required
-          />
-        </label>
-
-        {% if error is defined and error %}
-          <p class="text-red-600 text-sm mt-1">{{ error }}</p>
-        {% endif %}
-
-        <button
-          type="submit"
-          class="w-full py-3 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700 transition disabled:opacity-50"
-        >
-          Sign Up
-        </button>
-
-        <p class="mt-2 text-center text-gray-600 text-sm">
-          Already have an account?
-          <a href="/login" class="text-blue-600 hover:underline font-medium">
-            Login
-          </a>
-        </p>
-      </form>
-    </div>
+<main class="min-h-screen flex items-center justify-center bg-gray-50 px-4"> <div class="w-full max-w-5xl px-4 sm:px-6 lg:px-8"> <div class="flex flex-col md:flex-row items-center gap-8 w-full md:w-auto p-6 sm:p-8 bg-white rounded-2xl shadow-lg mx-auto fade-slide">
+  {# Left side: Logo & Intro Text #}
+  <div class="flex flex-col items-center md:items-start text-center md:text-left md:w-1/2 gap-4">
+    <img src="/assets/logo.png" alt="AfriTicket Logo" class="h-16 mb-2" />
+    <h2 class="text-3xl font-bold text-gray-800">Create Account</h2>
+    <p class="text-gray-600">Sign up to start managing your events and tickets effortlessly.</p>
   </div>
-</main>
 
-<style>
-  .fade-slide {
-    opacity: 0;
-    transform: translateY(50px);
-    animation: fadeSlideIn 0.6s ease forwards;
-  }
-  @keyframes fadeSlideIn {
-    from {
-      opacity: 0;
-      transform: translateY(50px);
-    }
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
-  }
-</style>
+  {# Right side: Form #}
+  <form method="POST" action="/signup/submit" class="flex flex-col gap-4 w-full md:w-1/2">
+    <label class="block">
+      <span class="text-sm font-medium text-gray-700">Name</span>
+      <input type="text" name="name" placeholder="Your full name"
+        class="mt-1 w-full border px-3 py-2 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none transition"
+        required />
+    </label>
 
-<script src="/assets/js/storage.js"></script>
-<script src="/assets/js/fakeApi.js"></script>
-<script>
-document.addEventListener("DOMContentLoaded", () => {
-  const form = document.querySelector("form");
-  const button = form.querySelector("button[type='submit']");
-  const errorBox = document.createElement("p");
-  errorBox.className = "text-red-600 text-sm mt-1 hidden";
-  form.appendChild(errorBox);
+    <label class="block">
+      <span class="text-sm font-medium text-gray-700">Email</span>
+      <input type="email" name="email" placeholder="you@example.com"
+        class="mt-1 w-full border px-3 py-2 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none transition"
+        required />
+    </label>
 
-  const showError = msg => {
-    errorBox.textContent = msg;
-    errorBox.classList.remove("hidden");
-  };
+    <label class="block">
+      <span class="text-sm font-medium text-gray-700">Password</span>
+      <input type="password" name="password" placeholder="********"
+        class="mt-1 w-full border px-3 py-2 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none transition"
+        required />
+    </label>
 
-  const showSuccess = msg => {
-    errorBox.textContent = msg;
-    errorBox.classList.remove("hidden");
-    errorBox.classList.replace("text-red-600", "text-green-600");
-  };
+    {% if error is defined and error %}
+      <p class="text-red-600 text-sm mt-1">{{ error }}</p>
+    {% endif %}
 
-  form.addEventListener("submit", async e => {
-    e.preventDefault();
-    errorBox.classList.add("hidden");
-    button.disabled = true;
+    <button type="submit"
+      class="w-full py-3 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700 transition disabled:opacity-50">
+      Sign Up
+    </button>
 
-    const formData = Object.fromEntries(new FormData(form).entries());
+    <p class="mt-2 text-center text-gray-600 text-sm">
+      Already have an account?
+      <a href="/login" class="text-blue-600 hover:underline font-medium">Login</a>
+    </p>
+  </form>
+</div>
 
-    try {
-      {% if app.request.getPathInfo() == '/signup' %}
-        await FakeApi.signup(formData);
-        showSuccess("Account created! Redirecting...");
-      {% else %}
-        await FakeApi.login(formData);
-        showSuccess("Login successful! Redirecting...");
-      {% endif %}
-
-      setTimeout(() => {
-        window.location.href = "/dashboard";
-      }, 1000);
-    } catch (err) {
-      showError(err.message || "Something went wrong.");
-    } finally {
-      button.disabled = false;
-    }
-  });
-});
-</script>
+</div> </main> <style> .fade-slide { opacity: 0; transform: translateY(50px); animation: fadeSlideIn 0.6s ease forwards; } @keyframes fadeSlideIn { from { opacity: 0; transform: translateY(50px); } to { opacity: 1; transform: translateY(0); } } </style>
 
 {% endblock %}

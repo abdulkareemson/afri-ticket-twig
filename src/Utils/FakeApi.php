@@ -1,93 +1,111 @@
 <?php
-require_once __DIR__ . '/Storage.php';
+namespace Src\Utils;
 
-class FakeApi {
+class FakeApi
+{
+    /**
+     * Register a new user.
+     */
+    public static function register(string $email, string $password, string $fullName): array
+    {
+        $users = Storage::getUsers();
 
-  /**
-   * Register a new user.
-   */
-  public static function signup(string $name, string $email, string $password): array {
-    $users = Storage::get('users');
+        // Check if email already exists
+        foreach ($users as $user) {
+            if (strtolower($user['email']) === strtolower($email)) {
+                return [
+                    'success' => false,
+                    'message' => 'Email already registered. Please login instead.'
+                ];
+            }
+        }
 
-    // Check if user already exists
-    foreach ($users as $user) {
-      if (strtolower($user['email']) === strtolower($email)) {
-        return ['success' => false, 'error' => 'Email already exists.'];
-      }
+        // Create new user
+        $newUser = [
+            'id' => uniqid('user_', true),
+            'email' => $email,
+            'password' => password_hash($password, PASSWORD_DEFAULT),
+            'fullName' => $fullName,
+            'createdAt' => date('Y-m-d H:i:s')
+        ];
+
+        $users[] = $newUser;
+        Storage::saveUsers($users);
+
+        return [
+            'success' => true,
+            'message' => 'Registration successful.',
+            'user' => $newUser
+        ];
     }
 
-    $newUser = [
-      'id' => uniqid('user_'),
-      'name' => trim($name),
-      'email' => strtolower(trim($email)),
-      'password' => password_hash($password, PASSWORD_DEFAULT),
-      'created_at' => date('Y-m-d H:i:s')
-    ];
+    /**
+     * Authenticate a user.
+     */
+    public static function login(string $email, string $password): array
+    {
+        $users = Storage::getUsers();
 
-    Storage::add('users', $newUser);
-    return ['success' => true, 'user' => $newUser];
-  }
+        foreach ($users as $user) {
+            if (strtolower($user['email']) === strtolower($email)) {
+                if (password_verify($password, $user['password'])) {
+                    return [
+                        'success' => true,
+                        'message' => 'Login successful.',
+                        'user' => $user
+                    ];
+                } else {
+                    return [
+                        'success' => false,
+                        'message' => 'Incorrect password.'
+                    ];
+                }
+            }
+        }
 
-  /**
-   * Log in an existing user.
-   */
-  public static function login(string $email, string $password): array {
-    $user = Storage::find('users', ['email' => strtolower(trim($email))]);
-
-    if (!$user) {
-      return ['success' => false, 'error' => 'User not found.'];
+        return [
+            'success' => false,
+            'message' => 'No account found for this email.'
+        ];
     }
 
-    if (!password_verify($password, $user['password'])) {
-      return ['success' => false, 'error' => 'Invalid password.'];
+    /**
+     * Retrieve all tickets for a given user.
+     */
+    public static function getTickets(string $userId): array
+    {
+        $tickets = Storage::getTickets();
+
+        // Ensure we return only user-related tickets
+        return array_values(array_filter($tickets, function ($t) use ($userId) {
+            return isset($t['userId']) && $t['userId'] === $userId;
+        }));
     }
 
-    // Simulate session/localStorage handling for browser-based persistence
-    return ['success' => true, 'user' => $user];
-  }
+    /**
+     * Create a new support ticket.
+     */
+    public static function createTicket(string $userId, string $subject, string $description): array
+    {
+        $tickets = Storage::getTickets();
 
-  /**
-   * Get all tickets.
-   */
-  public static function getTickets(): array {
-    return Storage::get('tickets');
-  }
+        $newTicket = [
+            'id' => uniqid('ticket_', true),
+            'userId' => $userId,
+            'subject' => $subject,
+            'description' => $description,
+            'status' => 'open',
+            'createdAt' => date('Y-m-d H:i:s'),
+            'updatedAt' => date('Y-m-d H:i:s')
+        ];
 
-  /**
-   * Create a new ticket.
-   */
-  public static function createTicket(string $userId, string $title, string $eventDate, string $location): array {
-    $tickets = Storage::get('tickets');
+        $tickets[] = $newTicket;
+        Storage::saveTickets($tickets);
 
-    $newTicket = [
-      'id' => uniqid('ticket_'),
-      'user_id' => $userId,
-      'title' => trim($title),
-      'event_date' => $eventDate,
-      'location' => trim($location),
-      'status' => 'active',
-      'created_at' => date('Y-m-d H:i:s')
-    ];
-
-    Storage::add('tickets', $newTicket);
-    return ['success' => true, 'ticket' => $newTicket];
-  }
-
-  /**
-   * Get tickets for a specific user.
-   */
-  public static function getUserTickets(string $userId): array {
-    $tickets = Storage::get('tickets');
-    return array_values(array_filter($tickets, fn($t) => $t['user_id'] === $userId));
-  }
-
-  /**
-   * Cancel or update ticket status.
-   */
-  public static function cancelTicket(string $ticketId): array {
-    $updated = Storage::update('tickets', ['id' => $ticketId], ['status' => 'cancelled']);
-    return $updated
-      ? ['success' => true, 'message' => 'Ticket cancelled successfully.']
-      : ['success' => false, 'error' => 'Ticket not found.'];
-  }
+        return [
+            'success' => true,
+            'message' => 'Ticket created successfully.',
+            'ticket' => $newTicket
+        ];
+    }
 }

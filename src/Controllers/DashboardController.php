@@ -11,7 +11,11 @@ class DashboardController
     public function __construct(Environment $twig)
     {
         $this->twig = $twig;
-        session_start();
+
+        // ✅ Only start session if not already active
+        if (session_status() === PHP_SESSION_NONE) {
+            session_start();
+        }
     }
 
     /**
@@ -27,8 +31,8 @@ class DashboardController
 
         $user = $_SESSION['user'];
 
-        // Fetch tickets from the fake API (simulates DB)
-        $tickets = FakeApi::getTickets();
+        // ✅ Pass user ID to get only their tickets
+        $tickets = FakeApi::getTickets($user['id']);
 
         // Calculate ticket stats
         $totalTickets = count($tickets);

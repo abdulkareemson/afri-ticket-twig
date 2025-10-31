@@ -1,7 +1,8 @@
 <?php
+
 namespace Src\Controllers;
 
-use Src\Utils\FakeApi;
+use Src\Utils\Storage;
 use Twig\Environment;
 
 class AuthController
@@ -11,7 +12,11 @@ class AuthController
     public function __construct(Environment $twig)
     {
         $this->twig = $twig;
-        session_start();
+
+        // ✅ Only start session if not already active
+        if (session_status() === PHP_SESSION_NONE) {
+            session_start();
+        }
     }
 
     /**
@@ -25,12 +30,14 @@ class AuthController
         }
 
         echo $this->twig->render('pages/login.html.twig', [
-            'error' => null,
+            'error' => $_SESSION['error'] ?? null,
         ]);
+
+        unset($_SESSION['error']);
     }
 
     /**
-     * Handle login submission
+     * Handle login form
      */
     public function loginSubmit(array $data): void
     {
@@ -38,22 +45,29 @@ class AuthController
         $password = trim($data['password'] ?? '');
 
         if (!$email || !$password) {
-            echo $this->twig->render('pages/login.html.twig', [
-                'error' => 'Email and password are required.',
-            ]);
-            return;
+            $_SESSION['error'] = 'Email and password are required.';
+            header('Location: /login');
+            exit;
         }
 
-        $response = FakeApi::login($email, $password);
+        $users = Storage::get('users');
+        $foundUser = null;
 
-        if ($response['success']) {
-            $_SESSION['user'] = $response['user'];
+        foreach ($users as $u) {
+            if ($u['email'] === $email && password_verify($password, $u['password'])) {
+                $foundUser = $u;
+                break;
+            }
+        }
+
+        if ($foundUser) {
+            $_SESSION['user'] = $foundUser;
             header('Location: /dashboard');
             exit;
         } else {
-            echo $this->twig->render('pages/login.html.twig', [
-                'error' => $response['error'] ?? 'Login failed.',
-            ]);
+            $_SESSION['error'] = 'Invalid email or password.';
+            header('Location: /login');
+            exit;
         }
     }
 
@@ -68,12 +82,14 @@ class AuthController
         }
 
         echo $this->twig->render('pages/signup.html.twig', [
-            'error' => null,
+            'error' => $_SESSION['error'] ?? null,
         ]);
+
+        unset($_SESSION['error']);
     }
 
     /**
-     * Handle signup submission
+     * Handle signup form
      */
     public function signupSubmit(array $data): void
     {
@@ -82,27 +98,39 @@ class AuthController
         $password = trim($data['password'] ?? '');
 
         if (!$name || !$email || !$password) {
-            echo $this->twig->render('pages/signup.html.twig', [
-                'error' => 'All fields are required.',
-            ]);
-            return;
-        }
-
-        $response = FakeApi::signup($name, $email, $password);
-
-        if ($response['success']) {
-            $_SESSION['user'] = $response['user'];
-            header('Location: /dashboard');
+            $_SESSION['error'] = 'All fields are required.';
+            header('Location: /signup');
             exit;
-        } else {
-            echo $this->twig->render('pages/signup.html.twig', [
-                'error' => $response['error'] ?? 'Signup failed.',
-            ]);
         }
+
+        $users = Storage::get('users');
+
+        foreach ($users as $u) {
+            if ($u['email'] === $email) {
+                $_SESSION['error'] = 'Email already exists.';
+                header('Location: /signup');
+                exit;
+            }
+        }
+
+        $newUser = [
+            'id' => uniqid(),
+            'name' => $name,
+            'email' => $email,
+            'password' => password_hash($password, PASSWORD_DEFAULT),
+            'createdAt' => date('c'),
+        ];
+
+        $users[] = $newUser;
+        Storage::set('users', $users);
+
+        $_SESSION['user'] = $newUser;
+        header('Location: /dashboard');
+        exit;
     }
 
     /**
-     * Logout user
+     * Logout
      */
     public function logout(): void
     {

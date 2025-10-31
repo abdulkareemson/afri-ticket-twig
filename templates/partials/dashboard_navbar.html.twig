@@ -1,0 +1,50 @@
+<nav class="bg-white shadow-md px-6 py-4 flex justify-between items-center sticky top-0 z-50">
+  {# Logo #}
+  <div class="flex items-center gap-2 cursor-pointer" onclick="window.location.href='/dashboard'">
+    <img src="/assets/logo.png" alt="AfriTicket Logo" class="h-12 w-auto object-contain" />
+    <span class="hidden sm:inline text-lg font-semibold text-blue-600">AfriTicket</span>
+  </div>
+
+  {# Desktop Links #}
+  <div class="hidden md:flex items-center gap-6">
+    <a href="/dashboard" class="text-gray-700 hover:text-blue-600 transition cursor-pointer {% if current_page == 'dashboard' %}text-blue-600{% endif %}">
+      Dashboard
+    </a>
+    <a href="/tickets" class="text-gray-700 hover:text-blue-600 transition cursor-pointer {% if current_page == 'tickets' %}text-blue-600{% endif %}">
+      Tickets
+    </a>
+    <span class="text-gray-500">Hello, {{ user.name ?? 'User' }}</span>
+    <a href="/logout" class="px-4 py-1 bg-red-500 text-white rounded hover:bg-red-600 transition cursor-pointer">
+      Logout
+    </a>
+  </div>
+
+  {# Mobile Menu #}
+  <div class="md:hidden relative">
+    <button id="mobile-menu-btn" class="text-gray-700 focus:outline-none text-2xl cursor-pointer">
+      ☰
+    </button>
+
+    <div id="mobile-menu" class="absolute right-0 mt-2 w-56 bg-white shadow-lg rounded-md flex flex-col p-2 z-50 hidden">
+      <a href="/dashboard" class="py-2 px-3 hover:bg-gray-100 rounded cursor-pointer" onclick="closeMobileMenu()">Dashboard</a>
+      <a href="/tickets" class="py-2 px-3 hover:bg-gray-100 rounded cursor-pointer" onclick="closeMobileMenu()">Tickets</a>
+      <span class="py-2 px-3 text-gray-500">Hello, {{ user.name ?? 'User' }}</span>
+      <a href="/logout" class="py-2 px-3 mt-1 bg-red-500 text-white rounded hover:bg-red-600 cursor-pointer">Logout</a>
+    </div>
+  </div>
+</nav>
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const menuBtn = document.getElementById('mobile-menu-btn');
+    const mobileMenu = document.getElementById('mobile-menu');
+
+    menuBtn.addEventListener('click', () => {
+      mobileMenu.classList.toggle('hidden');
+    });
+
+    window.closeMobileMenu = () => {
+      mobileMenu.classList.add('hidden');
+    }
+  });
+</script>

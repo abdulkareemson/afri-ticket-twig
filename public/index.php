@@ -1,12 +1,14 @@
 <?php
-require __DIR__ . '/../src/bootstrap.php';
+declare(strict_types=1);
+
+$twig = require __DIR__ . '/../src/bootstrap.php';
 
 use Src\Controllers\LandingController;
 use Src\Controllers\AuthController;
 use Src\Controllers\DashboardController;
 use Src\Controllers\TicketController;
 
-// Parse URI
+// Parse the URI
 $uri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
 
 // Route map
@@ -50,7 +52,7 @@ if (isset($routes[$uri])) {
     [$controllerClass, $method] = $routes[$uri];
     $controller = new $controllerClass($twig);
 
-    // Protect routes
+    // Guard protection
     if (in_array($uri, $protectedRoutes) && !isset($_SESSION['user'])) {
         header('Location: /login');
         exit;

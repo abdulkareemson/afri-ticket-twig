@@ -11,7 +11,11 @@ class TicketController
     public function __construct(Environment $twig)
     {
         $this->twig = $twig;
-        session_start();
+
+        // ✅ Only start session if not already active
+        if (session_status() === PHP_SESSION_NONE) {
+            session_start();
+        }
     }
 
     /**

@@ -2,12 +2,18 @@
 
 {% block content %}
   <div class="min-h-screen flex flex-col bg-gray-50">
-    {% include 'partials/navbar.html.twig' %}
 
+    {# Dashboard-specific navbar #}
+    {% include 'partials/dashboard_navbar.html.twig' ignore missing %}
+
+    {# Main content area #}
     <main class="flex-grow w-full max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 mt-6 pt-4">
-      {% block content %}{% endblock %}
+      {% block page_content %}
+        {# Child pages (dashboard, tickets, etc.) will inject content here #}
+      {% endblock %}
     </main>
 
-    {% include 'partials/footer.html.twig' %}
+    {# Shared footer #}
+    {% include 'partials/footer.html.twig' ignore missing %}
   </div>
 {% endblock %}
