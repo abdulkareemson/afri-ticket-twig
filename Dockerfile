@@ -1,6 +1,7 @@
 # Use official PHP 8.2 with Apache
 FROM php:8.2-apache
 
+# Set working directory
 WORKDIR /var/www/html
 
 # Install system dependencies required by Composer packages
@@ -15,6 +16,9 @@ RUN apt-get update && apt-get install -y \
 
 # Enable Apache mod_rewrite
 RUN a2enmod rewrite
+
+# Allow .htaccess overrides
+RUN sed -i 's/AllowOverride None/AllowOverride All/g' /etc/apache2/apache2.conf
 
 # Copy project files
 COPY . /var/www/html/
