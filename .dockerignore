@@ -1,0 +1,18 @@
+# Ignore Git files
+.git
+.gitignore
+
+# Ignore Composer cache and vendor (optional if you want Docker to install)
+vendor/
+composer.lock
+
+# Node / JS stuff
+node_modules/
+npm-debug.log
+yarn.lock
+
+# IDE and OS files
+*.swp
+*.swo
+.DS_Store
+Thumbs.db
