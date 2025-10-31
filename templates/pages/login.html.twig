@@ -90,4 +90,54 @@
     }
   }
 </style>
+
+<script src="/assets/js/storage.js"></script>
+<script src="/assets/js/fakeApi.js"></script>
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  const form = document.querySelector("form");
+  const button = form.querySelector("button[type='submit']");
+  const errorBox = document.createElement("p");
+  errorBox.className = "text-red-600 text-sm mt-1 hidden";
+  form.appendChild(errorBox);
+
+  const showError = msg => {
+    errorBox.textContent = msg;
+    errorBox.classList.remove("hidden");
+  };
+
+  const showSuccess = msg => {
+    errorBox.textContent = msg;
+    errorBox.classList.remove("hidden");
+    errorBox.classList.replace("text-red-600", "text-green-600");
+  };
+
+  form.addEventListener("submit", async e => {
+    e.preventDefault();
+    errorBox.classList.add("hidden");
+    button.disabled = true;
+
+    const formData = Object.fromEntries(new FormData(form).entries());
+
+    try {
+      {% if app.request.getPathInfo() == '/signup' %}
+        await FakeApi.signup(formData);
+        showSuccess("Account created! Redirecting...");
+      {% else %}
+        await FakeApi.login(formData);
+        showSuccess("Login successful! Redirecting...");
+      {% endif %}
+
+      setTimeout(() => {
+        window.location.href = "/dashboard";
+      }, 1000);
+    } catch (err) {
+      showError(err.message || "Something went wrong.");
+    } finally {
+      button.disabled = false;
+    }
+  });
+});
+</script>
+
 {% endblock %}

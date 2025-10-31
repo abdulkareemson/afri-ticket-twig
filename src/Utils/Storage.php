@@ -1,143 +1,98 @@
 <?php
-namespace Src\Utils;
+class Storage {
+  private static $basePath = __DIR__ . '/../data/';
 
-use Src\Utils\Constants;
+  /**
+   * Get data from a JSON file.
+   */
+  public static function get(string $fileName): array {
+    $path = self::$basePath . $fileName . '.json';
+    if (!file_exists($path)) return [];
 
-class Storage
-{
-    private static string $storagePath = __DIR__ . '/../../templates/data';
+    $json = file_get_contents($path);
+    $data = json_decode($json, true);
+    return is_array($data) ? $data : [];
+  }
 
-    /**
-     * Ensure the storage directory exists
-     */
-    private static function ensureStorageDir(): void
-    {
-        if (!file_exists(self::$storagePath)) {
-            mkdir(self::$storagePath, 0777, true);
+  /**
+   * Save data to a JSON file.
+   */
+  public static function set(string $fileName, array $data): bool {
+    $path = self::$basePath . $fileName . '.json';
+    $json = json_encode($data, JSON_PRETTY_PRINT);
+    return file_put_contents($path, $json) !== false;
+  }
+
+  /**
+   * Find a record in JSON by matching key-value pairs.
+   */
+  public static function find(string $fileName, array $criteria): ?array {
+    $records = self::get($fileName);
+    foreach ($records as $record) {
+      $match = true;
+      foreach ($criteria as $key => $value) {
+        if (!isset($record[$key]) || $record[$key] != $value) {
+          $match = false;
+          break;
         }
+      }
+      if ($match) return $record;
     }
+    return null;
+  }
 
-    /**
-     * Get full path for a given file
-     */
-    private static function getFilePath(string $filename): string
-    {
-        self::ensureStorageDir();
-        return self::$storagePath . '/' . $filename;
-    }
+  /**
+   * Add a new record to JSON storage.
+   */
+  public static function add(string $fileName, array $record): bool {
+    $records = self::get($fileName);
+    $records[] = $record;
+    return self::set($fileName, $records);
+  }
 
-    // -----------------------------
-    // Generic JSON load/save
-    // -----------------------------
-    public static function save(string $filename, $data): bool
-    {
-        try {
-            file_put_contents(self::getFilePath($filename), json_encode($data, JSON_PRETTY_PRINT));
-            return true;
-        } catch (\Throwable $e) {
-            error_log("Storage save error: " . $e->getMessage());
-            return false;
+  /**
+   * Update a record (by key-value pair match).
+   */
+  public static function update(string $fileName, array $criteria, array $newData): bool {
+    $records = self::get($fileName);
+    $updated = false;
+
+    foreach ($records as &$record) {
+      $match = true;
+      foreach ($criteria as $key => $value) {
+        if (!isset($record[$key]) || $record[$key] != $value) {
+          $match = false;
+          break;
         }
+      }
+
+      if ($match) {
+        $record = array_merge($record, $newData);
+        $updated = true;
+        break;
+      }
     }
 
-    public static function load(string $filename)
-    {
-        try {
-            $path = self::getFilePath($filename);
-            if (!file_exists($path)) return [];
-            return json_decode(file_get_contents($path), true);
-        } catch (\Throwable $e) {
-            error_log("Storage load error: " . $e->getMessage());
-            return [];
+    if ($updated) {
+      return self::set($fileName, $records);
+    }
+    return false;
+  }
+
+  /**
+   * Delete a record by criteria.
+   */
+  public static function delete(string $fileName, array $criteria): bool {
+    $records = self::get($fileName);
+    $filtered = array_filter($records, function ($record) use ($criteria) {
+      foreach ($criteria as $key => $value) {
+        if (isset($record[$key]) && $record[$key] == $value) {
+          return false; // remove
         }
-    }
+      }
+      return true;
+    });
 
-    public static function remove(string $filename): bool
-    {
-        try {
-            $path = self::getFilePath($filename);
-            if (file_exists($path)) unlink($path);
-            return true;
-        } catch (\Throwable $e) {
-            error_log("Storage remove error: " . $e->getMessage());
-            return false;
-        }
-    }
-
-    // -----------------------------
-    // Users
-    // -----------------------------
-    public static function getUsers(): array
-    {
-        return self::load('users.json');
-    }
-
-    public static function saveUser(array $user): bool
-    {
-        $users = self::getUsers();
-        $users[] = $user;
-        return self::save('users.json', $users);
-    }
-
-    // -----------------------------
-    // Tickets
-    // -----------------------------
-    public static function getTickets(): array
-    {
-        return self::load('tickets.json');
-    }
-
-    public static function saveTicket(array $ticket): bool
-    {
-        $tickets = self::getTickets();
-        $tickets[] = $ticket;
-        return self::save('tickets.json', $tickets);
-    }
-
-    public static function getTicketById(string $id): ?array
-    {
-        $tickets = self::getTickets();
-        foreach ($tickets as $ticket) {
-            if ($ticket['id'] === $id) return $ticket;
-        }
-        return null;
-    }
-
-    public static function updateTicket(string $id, array $data): bool
-    {
-        $tickets = self::getTickets();
-        foreach ($tickets as &$ticket) {
-            if ($ticket['id'] === $id) {
-                $ticket = array_merge($ticket, $data);
-                $ticket['updatedAt'] = date('c');
-                return self::save('tickets.json', $tickets);
-            }
-        }
-        return false;
-    }
-
-    public static function deleteTicket(string $id): bool
-    {
-        $tickets = self::getTickets();
-        $tickets = array_filter($tickets, fn($t) => $t['id'] !== $id);
-        return self::save('tickets.json', array_values($tickets));
-    }
-
-    // -----------------------------
-    // Session
-    // -----------------------------
-    public static function getSession(): array
-    {
-        return self::load('session.json');
-    }
-
-    public static function setSession(array $sessionObj): bool
-    {
-        return self::save('session.json', $sessionObj);
-    }
-
-    public static function clearSession(): bool
-    {
-        return self::remove('session.json');
-    }
+    return self::set($fileName, array_values($filtered));
+  }
 }

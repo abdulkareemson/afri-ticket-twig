@@ -1,52 +1,53 @@
+
 {% extends 'layouts/dashboard_layout.html.twig' %}
 
 {% block content %}
 <div class="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 py-8">
 
-    <!-- Header -->
-    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 gap-4">
-        <h1 class="text-2xl font-bold">Manage Tickets</h1>
-        <a href="{{ path('ticket_create') }}" 
-           class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition">
-            + New Ticket
-        </a>
+  <!-- Header -->
+  <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 gap-4">
+    <h1 class="text-2xl font-bold">Manage Tickets</h1>
+    <a href="/tickets/create"
+       class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition">
+      + New Ticket
+    </a>
+  </div>
+
+  <!-- Tickets Grid -->
+  {% if tickets|length > 0 %}
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+      {% for ticket in tickets %}
+        {% include 'partials/ticket_card.html.twig' with {
+          ticket: ticket,
+          edit_path: '/tickets/edit/' ~ ticket.id,
+          delete_path: '/tickets/delete/' ~ ticket.id,
+          details_path: '/tickets/' ~ ticket.id
+        } %}
+      {% endfor %}
     </div>
+  {% else %}
+    <div class="text-center text-gray-500 mt-10">
+      No tickets found. Create one to get started.
+    </div>
+  {% endif %}
 
-    <!-- Tickets Grid -->
-    {% if tickets|length > 0 %}
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {% for ticket in tickets %}
-                {% include 'partials/ticket_card.html.twig' with {
-                    ticket: ticket,
-                    edit_path: path('ticket_edit', {'id': ticket.id}),
-                    delete_path: path('ticket_delete', {'id': ticket.id}),
-                    details_path: path('ticket_details', {'id': ticket.id})
-                } %}
-            {% endfor %}
-        </div>
-    {% else %}
-        <div class="text-center text-gray-500 mt-10">
-            No tickets found. Create one to get started.
-        </div>
-    {% endif %}
+  <!-- Create/Edit Modal -->
+  {% if show_form_modal %}
+    {% include 'partials/ticket_form.html.twig' with {
+      initial_data: editing_ticket,
+      submit_path: editing_ticket ? '/tickets/update/' ~ editing_ticket.id : '/tickets/store'
+    } %}
+  {% endif %}
 
-    <!-- Create/Edit Modal -->
-    {% if show_form_modal %}
-        {% include 'partials/ticket_form.html.twig' with {
-            initial_data: editing_ticket,
-            submit_path: editing_ticket ? path('ticket_update', {'id': editing_ticket.id}) : path('ticket_create')
-        } %}
-    {% endif %}
-
-    <!-- Confirm Delete Modal -->
-    {% if show_delete_confirm %}
-        {% include 'partials/modal_confirm.html.twig' with {
-            title: 'Delete Ticket?',
-            message: 'Are you sure you want to delete this ticket? This action cannot be undone.',
-            confirm_path: path('ticket_delete', {'id': deleting_ticket_id}),
-            cancel_path: path('tickets')
-        } %}
-    {% endif %}
+  <!-- Confirm Delete Modal -->
+  {% if show_delete_confirm %}
+    {% include 'partials/modal_confirm.html.twig' with {
+      title: 'Delete Ticket?',
+      message: 'Are you sure you want to delete this ticket? This action cannot be undone.',
+      confirm_path: '/tickets/delete/' ~ deleting_ticket_id,
+      cancel_path: '/tickets'
+    } %}
+  {% endif %}
 
 </div>
 {% endblock %}

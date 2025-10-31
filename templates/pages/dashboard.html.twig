@@ -1,49 +1,47 @@
-{# templates/pages/dashboard.html.twig #}
-
 {% extends 'layouts/dashboard_layout.html.twig' %}
 
 {% block content %}
 <div class="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 py-8">
 
-    {# Header #}
-    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 gap-4">
-        <h1 class="text-2xl font-bold">
-            Welcome, {{ user.name ?? 'User' }}
-        </h1>
+  {# Header #}
+  <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 gap-4">
+    <h1 class="text-2xl font-bold">
+      Welcome, {{ user.name ?? 'User' }}
+    </h1>
 
-        <div class="flex gap-2 flex-wrap">
-            <a href="{{ path('tickets') }}" class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition">
-                Manage Tickets
-            </a>
-        </div>
+    <div class="flex gap-2 flex-wrap">
+      <a href="/tickets" class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition">
+        Manage Tickets
+      </a>
     </div>
+  </div>
 
-    {# Stats Cards #}
-    <div class="grid grid-cols-1 sm:grid-cols-4 gap-6">
-        {% include 'partials/stat_card.html.twig' with {
-            title: 'Total Tickets',
-            value: totalTickets,
-            color: 'bg-blue-500'
-        } %}
+  {# Stats Cards #}
+  <div class="grid grid-cols-1 sm:grid-cols-4 gap-6">
+    {% include 'partials/stat_card.html.twig' with {
+      title: 'Total Tickets',
+      value: totalTickets,
+      color: 'bg-blue-500'
+    } %}
 
-        {% include 'partials/stat_card.html.twig' with {
-            title: 'Open Tickets',
-            value: openTickets,
-            color: 'bg-green-500'
-        } %}
+    {% include 'partials/stat_card.html.twig' with {
+      title: 'Open Tickets',
+      value: openTickets,
+      color: 'bg-green-500'
+    } %}
 
-        {% include 'partials/stat_card.html.twig' with {
-            title: 'In Progress',
-            value: inProgressTickets,
-            color: 'bg-yellow-500'
-        } %}
+    {% include 'partials/stat_card.html.twig' with {
+      title: 'In Progress',
+      value: inProgressTickets,
+      color: 'bg-yellow-500'
+    } %}
 
-        {% include 'partials/stat_card.html.twig' with {
-            title: 'Resolved Tickets',
-            value: resolvedTickets,
-            color: 'bg-gray-500'
-        } %}
-    </div>
+    {% include 'partials/stat_card.html.twig' with {
+      title: 'Resolved Tickets',
+      value: resolvedTickets,
+      color: 'bg-gray-500'
+    } %}
+  </div>
 
 </div>
 {% endblock %}

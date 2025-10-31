@@ -1,7 +1,7 @@
 <?php
 namespace Src\Controllers;
 
-use Src\Utils\Storage;
+use Src\Utils\FakeApi;
 use Twig\Environment;
 
 class DashboardController
@@ -15,11 +15,11 @@ class DashboardController
     }
 
     /**
-     * Render the dashboard page with ticket statistics.
+     * Render the dashboard with user info and ticket stats.
      */
     public function index(): void
     {
-        // Protect route: only logged-in users
+        // Ensure user is logged in
         if (!isset($_SESSION['user'])) {
             header('Location: /login');
             exit;
@@ -27,16 +27,16 @@ class DashboardController
 
         $user = $_SESSION['user'];
 
-        // Load tickets from storage
-        $tickets = Storage::getTickets();
+        // Fetch tickets from the fake API (simulates DB)
+        $tickets = FakeApi::getTickets();
 
-        // Calculate stats
+        // Calculate ticket stats
         $totalTickets = count($tickets);
         $openTickets = count(array_filter($tickets, fn($t) => $t['status'] === 'open'));
         $inProgressTickets = count(array_filter($tickets, fn($t) => $t['status'] === 'in_progress'));
         $resolvedTickets = count(array_filter($tickets, fn($t) => $t['status'] === 'closed'));
 
-        // Render Twig template
+        // Render dashboard view
         echo $this->twig->render('pages/dashboard.html.twig', [
             'user' => $user,
             'totalTickets' => $totalTickets,

@@ -1,7 +1,7 @@
 <?php
 namespace Src\Controllers;
 
-use Src\Utils\Storage;
+use Src\Utils\FakeApi;
 use Twig\Environment;
 
 class AuthController
@@ -30,14 +30,13 @@ class AuthController
     }
 
     /**
-     * Process login form
+     * Handle login submission
      */
     public function loginSubmit(array $data): void
     {
         $email = trim($data['email'] ?? '');
         $password = trim($data['password'] ?? '');
 
-        // Validate required fields
         if (!$email || !$password) {
             echo $this->twig->render('pages/login.html.twig', [
                 'error' => 'Email and password are required.',
@@ -45,24 +44,15 @@ class AuthController
             return;
         }
 
-        $users = Storage::getUsers();
-        $user = null;
+        $response = FakeApi::login($email, $password);
 
-        foreach ($users as $u) {
-            if ($u['email'] === $email && $u['password'] === $password) {
-                $user = $u;
-                break;
-            }
-        }
-
-        if ($user) {
-            $_SESSION['user'] = $user;
-            Storage::setSession(['user' => $user]);
+        if ($response['success']) {
+            $_SESSION['user'] = $response['user'];
             header('Location: /dashboard');
             exit;
         } else {
             echo $this->twig->render('pages/login.html.twig', [
-                'error' => 'Invalid email or password.',
+                'error' => $response['error'] ?? 'Login failed.',
             ]);
         }
     }
@@ -83,7 +73,7 @@ class AuthController
     }
 
     /**
-     * Process signup form
+     * Handle signup submission
      */
     public function signupSubmit(array $data): void
     {
@@ -91,7 +81,6 @@ class AuthController
         $email = trim($data['email'] ?? '');
         $password = trim($data['password'] ?? '');
 
-        // Validate required fields
         if (!$name || !$email || !$password) {
             echo $this->twig->render('pages/signup.html.twig', [
                 'error' => 'All fields are required.',
@@ -99,40 +88,25 @@ class AuthController
             return;
         }
 
-        // Check for duplicate email
-        $users = Storage::getUsers();
-        foreach ($users as $u) {
-            if ($u['email'] === $email) {
-                echo $this->twig->render('pages/signup.html.twig', [
-                    'error' => 'Email already exists.',
-                ]);
-                return;
-            }
+        $response = FakeApi::signup($name, $email, $password);
+
+        if ($response['success']) {
+            $_SESSION['user'] = $response['user'];
+            header('Location: /dashboard');
+            exit;
+        } else {
+            echo $this->twig->render('pages/signup.html.twig', [
+                'error' => $response['error'] ?? 'Signup failed.',
+            ]);
         }
-
-        $newUser = [
-            'id' => uniqid(),
-            'name' => $name,
-            'email' => $email,
-            'password' => $password,
-            'createdAt' => date('c'),
-        ];
-
-        Storage::saveUser($newUser);
-        $_SESSION['user'] = $newUser;
-        Storage::setSession(['user' => $newUser]);
-
-        header('Location: /dashboard');
-        exit;
     }
 
     /**
-     * Logout
+     * Logout user
      */
     public function logout(): void
     {
         session_destroy();
-        Storage::clearSession();
         header('Location: /login');
         exit;
     }
